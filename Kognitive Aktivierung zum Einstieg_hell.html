@@ -1,0 +1,334 @@
+<artifact type="code" language="html" title="Kognitive Aktivierung – Slot-Maschine (Schüleransprache)">
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Kognitive Aktivierung</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: Inter, system-ui, -apple-system, sans-serif;
+background: #f4f6f9;
+color: #1a2035;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 40px 20px;
+-webkit-font-smoothing: antialiased;
+}
+
+header {
+text-align: center;
+margin-bottom: 36px;
+}
+
+header h1 {
+font-size: clamp(20px, 3vw, 26px);
+font-weight: 700;
+color: #1a2035;
+margin-bottom: 8px;
+}
+
+header p {
+font-size: 14px;
+color: #8899bb;
+line-height: 1.6;
+}
+
+.machine {
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 22px;
+padding: 28px 24px 24px;
+width: 100%;
+max-width: 960px;
+box-shadow: 0 4px 28px rgba(0,0,0,.06);
+}
+
+.reels {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 14px;
+margin-bottom: 22px;
+}
+
+.reel {
+background: #f8fafc;
+border: 1px solid #e2e8f0;
+border-radius: 16px;
+height: 340px;
+overflow: hidden;
+position: relative;
+}
+
+.reel::before,
+.reel::after {
+content: '';
+position: absolute;
+left: 0; right: 0;
+height: 44px;
+z-index: 2;
+pointer-events: none;
+}
+.reel::before { top: 0; background: linear-gradient(to bottom, #f8fafc, transparent); }
+.reel::after { bottom: 0; background: linear-gradient(to top, #f8fafc, transparent); }
+
+.reel-highlight {
+position: absolute;
+top: 50%; left: 8px; right: 8px;
+height: 340px;
+transform: translateY(-50%);
+border: 1.5px solid #e2e8f0;
+border-radius: 12px;
+pointer-events: none;
+z-index: 1;
+transition: border-color .3s, box-shadow .3s;
+}
+
+.reel.landed .reel-highlight {
+border-color: #4f8ef7;
+box-shadow: 0 0 0 3px rgba(79,142,247,.09);
+}
+
+.strip {
+display: flex;
+flex-direction: column;
+}
+
+.strip-item {
+height: 340px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+padding: 26px 20px 22px;
+text-align: center;
+flex-shrink: 0;
+}
+
+.strip-item .emoji {
+font-size: 30px;
+line-height: 1;
+margin-bottom: 12px;
+}
+
+.strip-item .name {
+font-size: 15px;
+font-weight: 800;
+color: #1a2035;
+margin-bottom: 6px;
+}
+
+.strip-item .desc {
+font-size: 12px;
+color: #8899bb;
+line-height: 1.5;
+margin-bottom: 14px;
+}
+
+.divider {
+width: 32px;
+height: 1px;
+background: #e2e8f0;
+margin: 0 auto 14px;
+flex-shrink: 0;
+}
+
+.strip-item .howto {
+font-size: 12px;
+color: #4a5568;
+line-height: 1.7;
+text-align: left;
+width: 100%;
+}
+
+.btn-wrap {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
+}
+
+.btn-hint {
+font-size: 13px;
+color: #8899bb;
+}
+
+#spin {
+background: #1a2035;
+color: #fff;
+border: none;
+border-radius: 12px;
+padding: 13px 52px;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+letter-spacing: .02em;
+transition: background .2s, transform .1s;
+}
+
+#spin:hover { background: #2d3a55; }
+#spin:active { transform: scale(.97); }
+#spin:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+.reels { grid-template-columns: 1fr; }
+.reel { height: 300px; }
+.strip-item { height: 300px; }
+.reel-highlight { height: 300px; }
+}
+</style>
+</head>
+<body> <header>
+<h1>Womit startest du heute?</h1>
+<p>Drück auf „Ziehen" – und du bekommst deine Methode für den Einstieg.</p>
+</header> <div class="machine">
+<div class="reels">
+<div class="reel" id="reel0"><div class="reel-highlight"></div><div class="strip" id="strip0"></div></div>
+<div class="reel" id="reel1"><div class="reel-highlight"></div><div class="strip" id="strip1"></div></div>
+<div class="reel" id="reel2"><div class="reel-highlight"></div><div class="strip" id="strip2"></div></div>
+</div>
+<div class="btn-wrap">
+<span class="btn-hint">Wähle danach eine der drei Methoden aus – und leg los.</span>
+<button id="spin">Ziehen</button>
+</div>
+</div> <script>
+const METHODS = [
+{ emoji:'🔵', name:'Cluster',
+desc:'Alles, was dir zum Thema einfällt – einfach drauflos.',
+howto:'Schreib das Thema in die Mitte deines Blattes. Notiere 3 Minuten lang alle Begriffe, die dir dazu einfallen. Verbinde zusammengehörige Begriffe mit Strichen.' },
+{ emoji:'🗺️', name:'Advance Organizer',
+desc:'Was weißt du schon – und was willst du wissen?',
+howto:'Schreib das Thema in die Mitte. Notiere drum herum: Was weiß ich schon? Was will ich wissen? Verbinde beides mit Pfeilen.' },
+{ emoji:'🧠', name:'Mindmap',
+desc:'Dein Wissen als Äste – so weit du magst.',
+howto:'Schreib das Thema in die Mitte. Ziehe Hauptäste für Oberbegriffe. Ergänze Nebenäste frei – keine Wertung, alles darf rein.' },
+{ emoji:'🟡', name:'Pits',
+desc:'Begriffe auf Post-its – gemeinsam sortieren.',
+howto:'Schreib 3–5 Begriffe zum Thema auf Post-its (einen pro Zettel). Klebt sie gemeinsam an die Tafel und gruppiert zusammen, was zusammengehört.' },
+{ emoji:'✏️', name:'Scribbles',
+desc:'Zeichne, was dir zum Thema einfällt.',
+howto:'Nimm dir 3 Minuten und skizziere alles, was dir zum Thema einfällt – kein Perfektionismus nötig. Danach stellt ihr euch gegenseitig eure Zeichnungen kurz vor.' },
+{ emoji:'🪨', name:'Metaphergrafik',
+desc:'Was hat dieses Bild mit dem Thema zu tun?',
+howto:'Schau dir den Gegenstand oder das Bild an. Überlege: Was könnte das mit unserem Thema zu tun haben? Notiere deine Ideen und teile sie im Plenum.' },
+{ emoji:'🔤', name:'ABC-Methode',
+desc:'Zu jedem Buchstaben ein Begriff – wie viele schaffst du?',
+howto:'Schreib das Alphabet untereinander. Ergänze zu möglichst vielen Buchstaben einen Begriff, der zum Thema passt. Vergleicht danach eure Ergebnisse.' },
+{ emoji:'⭐', name:'Assoziationsstern',
+desc:'Was fällt dir spontan ein? Alles raus!',
+howto:'Schreib einen Begriff in die Mitte. Notiere deine Assoziationen als Strahlen eines Sterns drumherum – so schnell wie möglich, ohne zu werten.' },
+{ emoji:'🔗', name:'Assoziationskette',
+desc:'Ein Begriff führt zum nächsten – wie weit kommt ihr?',
+howto:'Jemand nennt einen Begriff zum Thema. Die nächste Person ergänzt einen Begriff, der damit zusammenhängt. So entsteht eine Gedankenkette.' },
+{ emoji:'💬', name:'Blitzlicht',
+desc:'Ein Satz von dir – mehr braucht es nicht.',
+howto:'Reihum sagt jede Person einen Satz zu dem, was sie zum Thema weiß. Keine Diskussion, kein Kommentar – einfach zuhören.' },
+{ emoji:'❓', name:'Erinnerungsquiz',
+desc:'Teste dich selbst – was weißt du noch?',
+howto:'Beantworte die Fragen schriftlich oder per Handzeichen. Danach wertet ihr gemeinsam aus: Was wusstest du schon, was war neu?' },
+{ emoji:'🔑', name:'KAWA',
+desc:'Jeder Buchstabe ist ein Hinweis – was steckt dahinter?',
+howto:'Der Schlüsselbegriff steht senkrecht an der Tafel. Ergänze zu jedem Buchstaben einen passenden Begriff – du kannst auch eine kleine Skizze dazumalen.' },
+{ emoji:'💡', name:'Begriffe vorhersagen',
+desc:'Was glaubst du, kommt heute vor?',
+howto:'Schau dir das Thema oder die Überschrift an. Schreib 3–5 Begriffe auf, die du darin erwartest. Vergleicht danach: Lagen eure Vorhersagen richtig?' },
+{ emoji:'✅', name:'Anticipation Guide',
+desc:'Stimmt das – oder stimmt das nicht?',
+howto:'Lies die Aussagen durch und entscheide: stimmt / stimmt nicht. Begründe kurz deine Meinung. Am Ende der Stunde schaust du, ob du recht hattest.' },
+{ emoji:'⚡', name:'Wortblitz',
+desc:'60 Sekunden – so viele Begriffe wie möglich!',
+howto:'Der Timer läuft. Schreib in 60 Sekunden alle Begriffe auf, die dir zum Thema einfallen. Wer hat den ungewöhnlichsten Begriff? Kurze Diskussion danach.' },
+{ emoji:'🔢', name:'Drei Begriffe',
+desc:'Was verbindet diese drei Begriffe?',
+howto:'Schau dir die drei Begriffe an der Tafel an. Schreib einen Satz, der erklärt, was sie miteinander verbindet. Vergleicht eure Antworten.' },
+{ emoji:'🖼️', name:'Bilderrätsel',
+desc:'Was siehst du – und was steckt dahinter?',
+howto:'Schau dir das Bild genau an. Was erkennst du? Was könnte das Thema der Stunde sein? Das Bild wird nach und nach aufgedeckt – ratet mit!' },
+];
+
+const ITEM_H = 340;
+const stripEls = [0,1,2].map(i => document.getElementById(`strip${i}`));
+const reelEls = [0,1,2].map(i => document.getElementById(`reel${i}`));
+const spinBtn = document.getElementById('spin');
+
+function makeItem(m) {
+const div = document.createElement('div');
+div.className = 'strip-item';
+div.innerHTML = `
+<div class="emoji">${m.emoji}</div>
+<div class="name">${m.name}</div>
+<div class="desc">${m.desc}</div>
+<div class="divider"></div>
+<div class="howto">${m.howto}</div>`;
+return div;
+}
+
+function pickThree() {
+const idx = [...Array(METHODS.length).keys()];
+for (let i = idx.length - 1; i > 0; i--) {
+const j = Math.floor(Math.random() * (i + 1));
+[idx[i], idx[j]] = [idx[j], idx[i]];
+}
+return idx.slice(0, 3);
+}
+
+function init() {
+[0,1,2].forEach(i => {
+const strip = stripEls[i];
+strip.innerHTML = '';
+strip.style.transition = 'none';
+strip.style.transform = 'translateY(0)';
+strip.appendChild(makeItem(METHODS[i]));
+});
+}
+
+function spin() {
+spinBtn.disabled = true;
+reelEls.forEach(r => r.classList.remove('landed'));
+
+const chosen = pickThree();
+
+[0,1,2].forEach(reelI => {
+const strip = stripEls[reelI];
+const target = METHODS[chosen[reelI]];
+
+const items = [];
+for (let f = 0; f < 10; f++) {
+items.push(METHODS[Math.floor(Math.random() * METHODS.length)]);
+}
+items.push(target);
+
+strip.style.transition = 'none';
+strip.style.transform = 'translateY(0)';
+strip.innerHTML = '';
+items.forEach(m => strip.appendChild(makeItem(m)));
+
+strip.getBoundingClientRect();
+
+const delay = reelI * 160;
+const duration = 0.85 + reelI * 0.18;
+
+setTimeout(() => {
+strip.style.transition = `transform ${duration}s cubic-bezier(0.22, 0.61, 0.36, 1)`;
+strip.style.transform = `translateY(-${10 * ITEM_H}px)`;
+
+setTimeout(() => {
+reelEls[reelI].classList.add('landed');
+if (reelI === 2) spinBtn.disabled = false;
+}, duration * 1000 + 80);
+}, delay);
+});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+init();
+spinBtn.addEventListener('click', spin);
+});
+</script> </body>
+</html>
+</artifact> 
